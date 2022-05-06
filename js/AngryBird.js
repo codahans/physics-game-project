@@ -1,5 +1,5 @@
-const canvas = document.getElementById("angrybird");
-const ourWorld = boxbox.createWorld(canvas);
+const canvas = document.getElementById("AngryBird");
+const ourWorld = window.boxbox.createWorld(canvas);
 
 ourWorld.createEntity({
   name: "bird",
@@ -18,7 +18,7 @@ ourWorld.createEntity({
   shape: "square",
   type: "static",
   color: "rgb(0,0,0)",
-  width: 20,
+  width: 60,
   height: 0.5,
   y: 12.5,
 });
@@ -26,9 +26,9 @@ ourWorld.createEntity({
 const block = {
   name: "block",
   shape: "square",
-  color: "red",
-  width: 0.5,
-  height: 4,
+  color: "pink",
+  width: 4,
+  height: 0.5,
   onImpact: function (entity, force) {
     if (entity.name() === "bird") {
       this.color("black");
@@ -37,16 +37,5 @@ const block = {
 };
 
 ourWorld.createEntity(block, {
-  x: 15
-}
-
-ourWorld.createEntity(block, {
-  x: 17
-}
-
-ourWorld.createEntity(block, {
-  x: 16,
-  y: 1,
-  width: 4,
-  height: .5
-}
+  y: 12
+})
