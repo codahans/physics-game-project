@@ -12,9 +12,11 @@ var render = Matter.Render.create({
   }
 });
       
-Matter.use('matter-tools');
-Matter.use('matter-collision-events');
-Matter.use('matter-attractors');
+// Matter.use('matter-tools');
+Matter.use(
+  'matter-collision-events',
+  'matter-attractors'
+);
 
 var ground = Matter.Bodies.rectangle(800, 500, 1200, 20, { isStatic: true }); 
       
