@@ -1,103 +1,37 @@
-const canvas = document.getElementById("AngryBird");
-const ourWorld = window.boxbox.createWorld(canvas);
-const offsetX = 30.60;
-const offsetY = 27.60;
-drawCanvas();
-var inputflag = 1;
-var chargeflag = 1;
+var engine = Matter.Engine.create();
 
-function drawCanvas() {
-  var ctx = canvas.getContext("2d");
-  ctx.canvas.width  = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
+var inputFlag = true;
 
-  ourWorld.createEntity({
-    name: "ground",
-    shape: "square",
-    type: "static",
-    color: "rgb(0,0,0)",
-    width: 42,
-    height: 0.5,
-    y: 12.5,
-    x: 1,
-  });
-
-  ourWorld.createEntity({
-    name: "spawnpoint",
-    shape: "square",
-    type: "static",
-    color: "red",
-    width: 4,
-    height: 0.5,
-    y: 12,
-    x: 1,
-  });
-
-  ourWorld.createEntity({
-    name: "projectile",
-    shape: "circle",
-    image: "negative-electron.png",
-    radius: 1,
-    imageStretchToFit: true,
-    density: 4,
-    x: 1.5,
-    y: 11,
-    onKeyDown: function (e) {
-      if (e.key === " " && inputflag) {
-        this.applyImpulse(120, 60);
-        inputflag = 0;
-      }
-    },
-    onImpact: function (entity, force) {
-      if (entity.name() === "negative-charge") {
-        this.applyImpulse(60);
-      }
-      if (entity.name() === "target") {
-        this._world._destroy(this);
-      }
-      if (entity.name() === "ground") {
-        this._world._destroy(this);
-      }
-    },  
-  });
-
-  const block = {
-    name: "target",
-    shape: "square",
-    type: "static",
-    color: "pink",
-    width: 4,
-    height: 0.4,
-    onImpact: function (entity, force) {
-      if (entity.name() === "projectile") {
-        this.color("green");
-      }
-    },
-  };
-
-  ourWorld.createEntity(block, {
-    y: 12,
-    x: 20
-  });
-}
-
-canvas.addEventListener("click", function(event) { 
-    var userX = event.clientX / offsetX;
-    var userY = event.clientY / offsetY;
-    placeCharge(userX, userY);
+var render = Matter.Render.create({
+  element: document.body,
+    engine: engine,
+    options: {
+    width: 1600,
+    height: 800, 
+    wireframes: false
+  }
 });
+      
+Matter.use('matter-tools');
+Matter.use('matter-collision-events');
+Matter.use('matter-attractors');
 
-function placeCharge(userX, userY) {
-  ourWorld.createEntity({
-    name: "negative-charge",
-    shape: "square",
-    type: "static",
-    color: "purple",
-    width: 3,
-    height: 0.5,
-    x: userX,
-    y: userY
-  })
-  console.log(userX);
-  console.log(userY);
-}
+var ground = Matter.Bodies.rectangle(800, 500, 1200, 20, { isStatic: true }); 
+      
+var ball = Matter.Bodies.circle(300, 470, 20);
+
+var target = Matter.Bodies.rectangle(1200, 483, 100, 10, { isStatic: true, color: "green"});
+
+var mouse = Matter.Mouse.create(render.canvas);
+var mouseConstraint = Matter.MouseConstraint.create(engine, {
+  mouse: mouse,
+  constraint: {
+  render: {visible: false}
+  }
+});
+render.mouse = mouse;
+
+Matter.World.add(engine.world, [ground, ball, mouseConstraint, target]);
+
+Matter.Runner.run(engine);
+Matter.Render.run(render);
